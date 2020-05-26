@@ -1,1 +1,2 @@
 # nursing-homes
+Note that the email and password for the dataset are retrieved from environment variables. You can either hand edit the App.R file, or set your environment variables by adding an .Renviron file to your home directory as described [here](https://cran.r-project.org/web/packages/startup/vignettes/startup-intro.html) 
