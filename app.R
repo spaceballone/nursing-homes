@@ -15,7 +15,7 @@ library(shinyWidgets)
 library(rjson)
 library(gt)
 
-# Define UI for application that draws a histogram
+
 ui <- fluidPage(theme = "styles.css",
                 div(
                     h4("COVID-19 and Nursing Homes")
@@ -26,19 +26,12 @@ ui <- fluidPage(theme = "styles.css",
                 ),
     column(width = 3,
            wellPanel(
-               #selectInput("finder","Find Grandma",selectize=TRUE,choices = c("a","b","c"))
                selectizeInput("finder","Find Grandma",choices = c("a","b","c"),
                                   options = list(
                                       placeholder = 'Search for a nursing home',
                                       onInitialize = I('function() { this.setValue(""); }')
                                   )
                               )
-               # searchInput(
-               #     inputId = "finder", label = "Find Grandma",
-               #     placeholder = "Search for a nursing home",
-               #     btnSearch = icon("search"),
-               #     width = "100%"
-               # ),
            ),
            wellPanel("Cases", gt_output(outputId = "totalCasesTable")),
            wellPanel("Deaths", gt_output(outputId = "totalDeathsTable")),
@@ -285,15 +278,7 @@ server <- function(session,input, output) {
             group_by(zip) %>%
             top_n(1,fips) %>%
             select(zip,fips,county)
-        
-        # df_zipToCountyFips <- read.csv("zip-county-fips.csv",stringsAsFactors = FALSE) %>%
-        #     rename(zip = `ZIP`,
-        #            fips = `COUNTY`) %>%
-        #     #Take the top county when the zip cuts through multiple counties
-        #     group_by(zip) %>%
-        #     top_n(1,fips) %>%
-        #     select(zip,fips)
-        
+
         df_latest_report <- latest_report()
     
         #Group by fips to help the map render faster
@@ -303,11 +288,10 @@ server <- function(session,input, output) {
             summarize(confirmed = sum(residents_total_confirmed,rm.na=TRUE))
         
         
-        url <- 'https://raw.githubusercontent.com/plotly/dash-opioid-epidemic-demo/master/us-counties.json'
+        #url <- 'https://raw.githubusercontent.com/plotly/dash-opioid-epidemic-demo/master/us-counties.json'
             #'https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json'
-        counties <- rjson::fromJSON(file=url)
-#        url2<- "https://raw.githubusercontent.com/plotly/datasets/master/fips-unemp-16.csv"
-#        df <- read.csv(url2, colClasses=c(fips="character"))
+        counties <- rjson::fromJSON(file='us-counties.json')
+    
         m <- list(
             l = 0,
             r = 0,
@@ -362,16 +346,11 @@ server <- function(session,input, output) {
                 marker = list(color = "fuchsia"))
         }
 
-#        fig <- fig %>% colorbar(title = "Confirmed COVID cases")
         fig <- fig %>% layout(
             title = "Confirmed COVID cases"
         ) %>% hide_colorbar() %>%
             hide_legend()
-        # 
-        # fig <- fig %>% layout(
-        #     geo = g
-        # )
-        
+
         return(fig)
     })
 
